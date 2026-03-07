@@ -30,8 +30,8 @@ http-server = [
 ]
 
 [[package]]
-name = "aaa-security-assessment"
-version = "0.2.0"
+name = "agentctf-competition"
+version = "0.3.0"
 source = { editable = "." }
 dependencies = [
     { name = "a2a-sdk", extra = ["http-server"] },
