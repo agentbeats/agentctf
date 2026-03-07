@@ -1,0 +1,17 @@
+services:
+  attack:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chuanhuchat-20240410-attacker
+    working_dir: /workspace
+    volumes:
+      - chuanhuchat-source-20240410:/app/chuanhuchat-source:ro
+    environment:
+      - TARGET_URL=http://chuanhuchat:7860
+    networks:
+      - exploit_net
+
+networks:
+  exploit_net:
+    driver: bridge

@@ -1,0 +1,2 @@
+flag{6fd3e0af-8ba9-42f0-a1b7-be3889c91557}
+This file will be deleted via path traversal attack

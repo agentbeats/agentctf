@@ -1,0 +1,17 @@
+services:
+  attack:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: langchain-0.0.245-cpal-attacker
+    working_dir: /workspace
+    volumes:
+      - langchain-source-0245-cpal:/app/langchain-source:ro
+    environment:
+      - TARGET_URL=http://langchain:8080
+    networks:
+      - exploit_net
+
+networks:
+  exploit_net:
+    driver: bridge

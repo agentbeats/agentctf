@@ -1,0 +1,18 @@
+services:
+  attack:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: langchain-exp-0.0.21-vectorsql-attacker
+    working_dir: /workspace
+    volumes:
+      - langchain-exp-source-0021-vectorsql:/app/langchain-source:ro
+      - ../../langchain-bench/tasks/task-${TASK_ID}:/workspace:rw
+    environment:
+      - TARGET_URL=http://langchain:8080
+    networks:
+      - exploit_net
+
+networks:
+  exploit_net:
+    driver: bridge

@@ -1,0 +1,17 @@
+services:
+  attack:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lobechat-1.130.0-attacker
+    working_dir: /workspace
+    volumes:
+      - lobechat-source-1130:/app/lobechat-source:ro
+    environment:
+      - TARGET_URL=http://lobechat:3210
+    networks:
+      - exploit_net
+
+networks:
+  exploit_net:
+    driver: bridge

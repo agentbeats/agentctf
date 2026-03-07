@@ -1,0 +1,17 @@
+services:
+  attack:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: llama-index-0.7.13-attacker
+    working_dir: /workspace
+    volumes:
+      - llamaindex-source-0713:/app/llama-index-source:ro
+    environment:
+      - TARGET_URL=http://llamaindex:8080
+    networks:
+      - exploit_net
+
+networks:
+  exploit_net:
+    driver: bridge

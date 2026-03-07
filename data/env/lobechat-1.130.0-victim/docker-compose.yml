@@ -1,0 +1,31 @@
+# Docker Compose for LobeChat 1.130.0 Security Testing
+# Full LobeChat service for CVE-2025-59426 (Open Redirect)
+
+include:
+  - ../lobechat-1.130.0-attacker/compose.yml
+
+volumes:
+  lobechat-source-1130:
+
+services:
+  lobechat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lobechat-1.130.0-victim
+    environment:
+      - PORT=3210
+      - NODE_ENV=development
+    volumes:
+      - lobechat-source-1130:/app/lobechat-source
+    working_dir: /app/lobechat-source
+    ports:
+      - "${HOST_PORT:-3211}:3210"
+    networks:
+      - exploit_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3210"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s

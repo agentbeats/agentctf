@@ -1,0 +1,31 @@
+# Docker Compose for Llama Index 0.7.13 Security Testing
+# CVE-2023-39662: PandasQueryEngine arbitrary code execution
+
+include:
+  - ../llama-index-0.7.13-attacker/compose.yml
+
+volumes:
+  llamaindex-source-0713:
+
+services:
+  llamaindex:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: llama-index-0.7.13-victim
+    environment:
+      - PORT=8080
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - llamaindex-source-0713:/app/llama-index-source
+    working_dir: /app/llama-index-source
+    ports:
+      - "${HOST_PORT:-8081}:8080"
+    networks:
+      - exploit_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s

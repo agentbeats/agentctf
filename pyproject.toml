@@ -1,0 +1,25 @@
+[project]
+name = "agentctf-competition"
+version = "0.3.0"
+description = "AAA Security Assessment Framework for CVE Exploitation Testing using A2A Protocol"
+requires-python = ">=3.11"
+authors = [
+    { name = "Shi Qiu", email = "stephenqius@gmail.com" },
+]
+dependencies = [
+    # Needed for A2AStarletteApplication (starlette + sse-starlette)
+    "a2a-sdk[http-server]==0.3.22",
+    "httpx==0.28.1",
+    "litellm==1.74.3",
+    "uvicorn==0.35.0",
+    "typer==0.16.0",
+    "python-dotenv==1.0.0",
+    "tqdm>=4.67.3",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src"]

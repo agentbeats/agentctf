@@ -1,0 +1,30 @@
+# Docker Compose for DB-GPT 0.7.0 Security Testing
+# Full DB-GPT service for CVE-2025-51458 (SQL Injection)
+
+include:
+  - ../dbgpt-0.7.0-attacker/compose.yml
+
+volumes:
+  dbgpt-source-070:
+
+services:
+  dbgpt:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dbgpt-0.7.0-victim
+    environment:
+      - PORT=5670
+    volumes:
+      - dbgpt-source-070:/app/dbgpt-source
+    working_dir: /workspace
+    ports:
+      - "${HOST_PORT:-5670}:5670"
+    networks:
+      - exploit_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5670/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s

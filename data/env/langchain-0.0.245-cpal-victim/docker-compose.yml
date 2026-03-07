@@ -1,0 +1,31 @@
+# Docker Compose for LangChain 0.0.245 CPAL Security Testing
+# CVE-2023-38860: CPALChain prompt injection to RCE
+
+include:
+  - ../langchain-0.0.245-cpal-attacker/compose.yml
+
+volumes:
+  langchain-source-0245-cpal:
+
+services:
+  langchain:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: langchain-0.0.245-cpal-victim
+    environment:
+      - PORT=8080
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - langchain-source-0245-cpal:/app/langchain-source
+    working_dir: /app/langchain-source
+    ports:
+      - "${HOST_PORT:-8083}:8080"
+    networks:
+      - exploit_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s

@@ -1,0 +1,16 @@
+# Security Green Agent Card Configuration
+
+name = "security_green_agent"
+description = "Security assessment orchestrator that manages Docker environments, coordinates with White Agent, and evaluates CVE vulnerability exploitation results"
+version = "1.0.0"
+default_input_modes = ["text/plain"]
+default_output_modes = ["text/plain"]
+
+[capabilities]
+
+[[skills]]
+id = "security_assessment"
+name = "Security Assessment"
+description = "Orchestrates security vulnerability assessments using Docker environments. Supports multiple CVE tasks including SSRF, XSS, authentication bypass, and more."
+tags = ["security", "assessment", "docker", "cve", "exploitation"]
+examples = []

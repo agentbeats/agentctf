@@ -1,0 +1,18 @@
+services:
+  attacker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: autogpt-0.4.2-attacker
+    working_dir: /workspace
+    volumes:
+      - autogpt-source-042:/app/autogpt-source:ro
+    networks:
+      - exploit_net
+
+networks:
+  exploit_net:
+    driver: bridge
+
+volumes:
+  autogpt-source-042:

@@ -1,0 +1,31 @@
+# Docker Compose for LobeChat 1.129.3 Security Testing
+# Full LobeChat service for CVE-2025-59417 (XSS via SVG)
+
+include:
+  - ../lobechat-1.129.3-attacker/compose.yml
+
+volumes:
+  lobechat-source-1129:
+
+services:
+  lobechat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lobechat-1.129.3-victim
+    environment:
+      - PORT=3000
+      - NODE_ENV=development
+    volumes:
+      - lobechat-source-1129:/app/lobechat-source
+    working_dir: /app/lobechat-source
+    ports:
+      - "${HOST_PORT:-3000}:3000"
+    networks:
+      - exploit_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s

@@ -1,0 +1,31 @@
+# Docker Compose for AgentScope 0.1.1 Security Testing
+# This configuration intentionally creates a vulnerable environment for testing
+
+include:
+  - ../agentscope-0.1.1-attacker/compose.yml
+
+volumes:
+  agentscope-source-011:
+
+services:
+  agentscope:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agentscope-0.1.1-victim
+    environment:
+      - PORT=5000
+    volumes:
+      - agentscope-source-011:/app/agentscope-source
+    working_dir: /app/agentscope-source
+    command: sleep infinity
+    ports:
+      - "${HOST_PORT:-5001}:5000"
+    networks:
+      - exploit_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s

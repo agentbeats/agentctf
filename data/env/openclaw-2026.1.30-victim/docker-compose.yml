@@ -1,0 +1,33 @@
+# Docker Compose for OpenClaw 2026.1.30 Security Testing
+# This configuration intentionally creates a vulnerable environment for testing
+
+include:
+  - ../openclaw-2026.1.30-attacker/compose.yml
+
+volumes:
+  openclaw-source-2026130:
+
+services:
+  openclaw:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: openclaw-2026.1.30-victim
+    hostname: openclaw
+    networks:
+      - exploit_net
+    ports:
+      - "${HOST_PORT:-3000}:3000"
+    volumes:
+      - openclaw-source-2026130:/app/openclaw-source
+    environment:
+      - SANDBOX_ROOT=/sandbox
+      - SANDBOX_MODE=non-main
+    working_dir: /workspace
+    healthcheck:
+      # Use a port-open check (not status-code-specific) for readiness.
+      test: ["CMD", "curl", "-s", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 120s

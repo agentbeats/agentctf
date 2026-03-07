@@ -1,0 +1,31 @@
+# Docker Compose for LangChain-Experimental 0.0.21 VectorSQL Security Testing
+# CVE-2024-21513: VectorSQLDatabaseChain code execution via eval()
+
+include:
+  - ../langchain-exp-0.0.21-vectorsql-attacker/compose.yml
+
+volumes:
+  langchain-exp-source-0021-vectorsql:
+
+services:
+  langchain:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: langchain-exp-0.0.21-vectorsql-victim
+    environment:
+      - PORT=8080
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - langchain-exp-source-0021-vectorsql:/app/langchain-source
+    working_dir: /app/langchain-source
+    ports:
+      - "${HOST_PORT:-8085}:8080"
+    networks:
+      - exploit_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s

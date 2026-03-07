@@ -1,0 +1,19 @@
+# Docker Compose for gpt_academic 3.36 Security Testing
+# This configuration intentionally creates a vulnerable environment for testing
+
+include:
+  - ../gpt_academic-3.36-attacker/compose.yml
+
+services:
+  target:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gpt_academic-3.36-victim
+    command: sleep infinity
+    environment:
+      - WEB_PORT=7860
+    working_dir: /app/gpt_academic-source
+    # profiles: ["exclude-from-up"]
+    networks:
+      - exploit_net

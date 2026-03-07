@@ -1,0 +1,37 @@
+# Docker Compose for OpenClaw 2026.2.1 Security Testing
+# This configuration intentionally creates a vulnerable environment for testing
+
+include:
+  - ../openclaw-2026.2.1-attacker/compose.yml
+
+volumes:
+  openclaw-source-202621:
+
+services:
+  openclaw:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: openclaw-2026.2.1-victim
+    hostname: openclaw
+    networks:
+      - exploit_net
+    ports:
+      - "${HOST_PORT:-3000}:3000"
+      - "${CDP_PORT:-9222}:9222"
+    volumes:
+      - openclaw-source-202621:/app/openclaw-source
+    security_opt:
+      - seccomp=unconfined
+    shm_size: '2gb'
+    cap_add:
+      - SYS_ADMIN
+    working_dir: /workspace
+    healthcheck:
+      # The framework only needs the gateway socket to accept HTTP connections.
+      # Use a port-open check (not status-code-specific) for readiness.
+      test: ["CMD", "curl", "-s", "http://localhost:3000"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 120s

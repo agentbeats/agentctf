@@ -1,0 +1,18 @@
+# Attacker container configuration for llama_index 0.9.47
+# Used to exploit CVE-2024-4181
+
+networks:
+  exploit_net:
+    driver: bridge
+
+services:
+  attacker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: llama-index-0.9.47-attacker
+    environment:
+    working_dir: /workspace
+    networks:
+      - exploit_net
+    command: sleep infinity

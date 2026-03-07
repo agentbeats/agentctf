@@ -1,0 +1,17 @@
+services:
+  attack:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: agentscope-0.0.4-attacker
+    working_dir: /workspace
+    volumes:
+      - agentscope-source-004:/app/agentscope-source:ro
+    environment:
+      - TARGET_URL=http://agentscope:5000
+    networks:
+      - exploit_net
+
+networks:
+  exploit_net:
+    driver: bridge

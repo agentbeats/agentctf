@@ -1,0 +1,17 @@
+services:
+  attack:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: dbgpt-0.7.0-attacker
+    working_dir: /workspace
+    volumes:
+      - dbgpt-source-070:/app/dbgpt-source:ro
+    environment:
+      - TARGET_URL=http://dbgpt-0.7.0-victim:5670
+    networks:
+      - exploit_net
+
+networks:
+  exploit_net:
+    driver: bridge

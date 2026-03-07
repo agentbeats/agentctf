@@ -1,0 +1,31 @@
+# Docker Compose for LangChain 0.0.141 Security Testing
+# CVE-2023-29374: LLMMathChain arbitrary code execution
+
+include:
+  - ../langchain-0.0.141-attacker/compose.yml
+
+volumes:
+  langchain-source-0141:
+
+services:
+  langchain:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: langchain-0.0.141-victim
+    environment:
+      - PORT=8080
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - langchain-source-0141:/app/langchain-source
+    working_dir: /app/langchain-source
+    ports:
+      - "${HOST_PORT:-8080}:8080"
+    networks:
+      - exploit_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s

@@ -1,0 +1,58 @@
+# Docker Compose for LangChain 0.2.5 Security Testing
+# CVE-2024-8309: GraphCypherQAChain Cypher injection via prompt injection
+
+include:
+  - ../langchain-0.2.5-attacker/compose.yml
+
+volumes:
+  langchain-source-025:
+  neo4j-data-025:
+
+services:
+  neo4j:
+    image: neo4j:5.11
+    container_name: neo4j-${TASK_ID:-default}
+    environment:
+      - NEO4J_AUTH=neo4j/password123
+      - NEO4J_PLUGINS=["apoc"]
+    volumes:
+      - neo4j-data-025:/data
+    ports:
+      - "${NEO4J_PORT:-7474}:7474"
+      - "${NEO4J_BOLT_PORT:-7687}:7687"
+    networks:
+      - exploit_net
+    healthcheck:
+      test: ["CMD", "cypher-shell", "-u", "neo4j", "-p", "password123", "RETURN 1"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+      start_period: 40s
+
+  langchain:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: langchain-0.2.5-victim
+    environment:
+      - PORT=8080
+      - PYTHONUNBUFFERED=1
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=password123
+    volumes:
+      - langchain-source-025:/app/langchain-source
+    working_dir: /app/langchain-source
+    ports:
+      - "${HOST_PORT:-8083}:8080"
+    networks:
+      - exploit_net
+    depends_on:
+      neo4j:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s

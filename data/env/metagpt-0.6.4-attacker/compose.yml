@@ -1,0 +1,11 @@
+services:
+  attack:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: metagpt-0.6.4-attacker
+    working_dir: /workspace
+    volumes:
+      - metagpt-source:/app/metagpt-source:ro
+    environment:
+      - TARGET_URL=http://metagpt:8080

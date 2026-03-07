@@ -1,0 +1,28 @@
+# Docker Compose for llama_index 0.9.47 Security Testing
+# CVE-2024-4181: Command injection via compromised LLM provider in RunGptLLM
+
+include:
+  - ../llama-index-0.9.47-attacker/compose.yml
+
+volumes:
+  llamaindex-source-0947:
+
+services:
+  llamaindex:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: llama-index-0.9.47-victim
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - llamaindex-source-0947:/app/llama-index-source
+    working_dir: /workspace
+    networks:
+      - exploit_net
+    healthcheck:
+      test: ["CMD", "python3", "-c", "import llama_index; print('OK')"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s

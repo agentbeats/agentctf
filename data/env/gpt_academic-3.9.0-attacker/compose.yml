@@ -1,0 +1,17 @@
+services:
+  attack:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gpt_academic-3.9.0-attacker
+    working_dir: /workspace
+    volumes:
+      - gpt_academic-source:/app/gpt_academic-source:ro
+    environment:
+      - TARGET_URL=http://gpt_academic:7860
+    networks:
+      - exploit_net
+
+networks:
+  exploit_net:
+    driver: bridge

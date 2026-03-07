@@ -1,0 +1,30 @@
+# Docker Compose for ChuanhuChatGPT 20240410 Security Testing
+# CVE-2024-6255, CVE-2024-6037, CVE-2024-6035
+
+include:
+  - ../chuanhuchat-20240410-attacker/compose.yml
+
+volumes:
+  chuanhuchat-source-20240410:
+
+services:
+  chuanhuchat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: chuanhuchat-20240410-victim
+    environment:
+      - PORT=7860
+    volumes:
+      - chuanhuchat-source-20240410:/app/chuanhuchat-source
+    working_dir: /workspace
+    ports:
+      - "${HOST_PORT:-7860}:7860"
+    networks:
+      - exploit_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7860"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s

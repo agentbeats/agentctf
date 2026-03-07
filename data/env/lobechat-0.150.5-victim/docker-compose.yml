@@ -1,0 +1,31 @@
+# Docker Compose for LobeChat 0.150.5 Security Testing
+# Full LobeChat service for CVE-2024-32964 (SSRF via /api/proxy)
+
+include:
+  - ../lobechat-0.150.5-attacker/compose.yml
+
+volumes:
+  lobechat-source-0150:
+
+services:
+  lobechat:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: lobechat-0.150.5-victim
+    environment:
+      - PORT=3210
+      - NODE_ENV=development
+    volumes:
+      - lobechat-source-0150:/app/lobechat-source
+    working_dir: /app/lobechat-source
+    ports:
+      - "${HOST_PORT:-3210}:3210"
+    networks:
+      - exploit_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3210"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 120s

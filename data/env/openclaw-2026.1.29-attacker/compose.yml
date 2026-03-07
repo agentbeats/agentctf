@@ -1,0 +1,23 @@
+# Attacker container configuration for OpenClaw security testing
+
+services:
+  attack:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: openclaw-2026.1.29-attacker
+    working_dir: /workspace
+    command: sleep infinity
+    networks:
+      - exploit_net
+    depends_on:
+      - openclaw
+    volumes:
+      - openclaw-source-2026129:/app/openclaw-source:ro
+    environment:
+      - OPENCLAW_WS=ws://openclaw:3000
+      - OPENCLAW_GATEWAY_TOKEN=test-token
+
+networks:
+  exploit_net:
+    driver: bridge

@@ -1,0 +1,20 @@
+# Docker Compose for metagpt 0.6.4 Security Testing
+# This configuration intentionally creates a vulnerable environment for testing
+
+include:
+  - ../metagpt-0.6.4-attacker/compose.yml
+
+volumes:
+  metagpt-source:
+
+services:
+  metagpt:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: metagpt-0.6.4-victim
+    environment:
+    volumes:
+      - metagpt-source:/app/metagpt-source
+    working_dir: /app/metagpt-source
+    command: sleep infinity

@@ -1,0 +1,15 @@
+services:
+  attack:
+    platform: linux/amd64
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: gpt_academic-3.91-attacker
+    working_dir: /workspace
+    command: sleep infinity
+    environment:
+      - TARGET_URL=http://gpt_academic:8080
+      - TARGET_CONTAINER=gpt_academic-security-test-${TASK_ID:-default}
+    volumes:
+      - gpt_academic-source:/app/gpt_academic-source:ro
+      - ./README.md:/workspace/README.md:ro

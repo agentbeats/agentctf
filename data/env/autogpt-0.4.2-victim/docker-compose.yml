@@ -1,0 +1,26 @@
+# Docker Compose for AutoGPT 0.4.2 Security Testing
+# Full AutoGPT service for CVE-2023-37273, CVE-2023-37274, CVE-2023-37275
+
+include:
+  - ../autogpt-0.4.2-attacker/compose.yml
+
+volumes:
+  autogpt-source-042:
+
+services:
+  autogpt:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: autogpt-0.4.2-victim
+    env_file:
+      - .env
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_API_BASE_URL=${OPENAI_API_BASE_URL:-https://litellm-991596698159.us-west1.run.app/v1}
+    volumes:
+      - autogpt-source-042:/app/autogpt-source
+    working_dir: /app/autogpt-source
+    networks:
+      - exploit_net
+    command: ["sleep", "infinity"]

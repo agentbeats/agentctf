@@ -1,0 +1,20 @@
+services:
+  attack:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: langchain-0.2.5-attacker
+    working_dir: /workspace
+    volumes:
+      - langchain-source-025:/app/langchain-source:ro
+    environment:
+      - TARGET_URL=http://langchain:8080
+      - NEO4J_URI=bolt://neo4j:7687
+      - NEO4J_USER=neo4j
+      - NEO4J_PASSWORD=password123
+    networks:
+      - exploit_net
+
+networks:
+  exploit_net:
+    driver: bridge

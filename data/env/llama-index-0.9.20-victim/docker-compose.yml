@@ -1,0 +1,32 @@
+# Docker Compose for Llama Index 0.9.20 Security Testing
+# CVE-2024-3098: RCE via regex-based safe_eval bypass using getattr()
+
+include:
+  - ../llama-index-0.9.20-attacker/compose.yml
+
+volumes:
+  llamaindex-source-0920:
+
+services:
+  llamaindex:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: llama-index-0.9.20-victim
+    environment:
+      - PORT=8080
+      - PYTHONUNBUFFERED=1
+      - OPENAI_API_KEY=sk-1234567890abcdef1234567890abcdef1234567890abcdef
+    volumes:
+      - llamaindex-source-0920:/app/llama-index-source
+    working_dir: /workspace
+    ports:
+      - "${HOST_PORT:-8082}:8080"
+    networks:
+      - exploit_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
