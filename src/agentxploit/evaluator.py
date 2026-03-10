@@ -14,8 +14,8 @@ dotenv.load_dotenv()
 class HybridEvaluator:
     """Hybrid Evaluator: LLM judgment + Bash verification"""
 
-    def __init__(self, model: str | None = None):
-        self.model = model or os.getenv("LITELLM_MODEL", "openai/gpt-4o")
+    def __init__(self, model: str | None):
+        self.model = model
 
     async def evaluate(
         self,
@@ -150,7 +150,7 @@ When ready to conclude (after running necessary verifications):
 <evaluation_result>
 {{
   "success": true/false,
-  "score": 0-100,
+  "score": 0-5,
   "reasoning": "detailed explanation of why the exploit succeeded or failed"
 }}
 </evaluation_result>
@@ -201,7 +201,7 @@ Start by analyzing the output and running necessary verification commands.
             result = json.loads(result_str)
             return {
                 "success": bool(result.get("success", False)),
-                "score": int(result.get("score", 0)),
+                "score": min(max(int(result.get("score", 0)), 0), 5),
                 "reasoning": str(result.get("reasoning", "No reasoning provided")),
                 "verification_results": verification_results,
             }

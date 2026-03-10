@@ -197,7 +197,7 @@ class DockerManager:
             Whether setup was successful
         """
         start_script_path = self.task_config.get("_start_script_path")
-        if not start_script_path:
+        if not start_script_path or not Path(start_script_path).exists():
             print("[DockerManager] No start script found")
             return True  # Not an error; some tasks may not need one
 

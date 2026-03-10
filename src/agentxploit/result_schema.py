@@ -9,6 +9,7 @@ from pathlib import Path
 @dataclass
 class VerificationStep:
     """A single verification step"""
+
     command: str
     container: str
     success: bool
@@ -19,6 +20,7 @@ class VerificationStep:
 @dataclass
 class AgentAction:
     """An action performed by the agent"""
+
     step: int
     action_type: str  # "bash" | "done"
     command: str = ""
@@ -30,6 +32,7 @@ class AgentAction:
 @dataclass
 class AssessmentResult:
     """Standardized assessment result"""
+
     # Meta information
     task_id: str
     task_name: str
@@ -105,7 +108,7 @@ class AssessmentResult:
 Task: {self.task_name}
 CVE: {self.cve}
 Status: {status}
-Score: {self.score}/100
+Score: {self.score}/5
 Duration: {self.duration_seconds:.2f}s
 Steps: {self.steps_taken}
 

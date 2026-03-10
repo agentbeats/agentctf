@@ -227,57 +227,5 @@ def info(
         raise typer.Exit(1)
 
 
-@app.command()
-def docker_up(
-    task_id: str = typer.Argument(
-        default="task-cve-2024-32964-ssrf",
-        help="Task ID for Docker environment",
-    ),
-):
-    """Start Docker environment manually (for debugging)."""
-    from src.agentxploit.task_loader import TaskLoader
-    from src.agentxploit.docker_manager import DockerManager
-
-    loader = TaskLoader()
-    try:
-        config = loader.load_task(task_id)
-    except FileNotFoundError:
-        print(f"Error: Task '{task_id}' not found")
-        raise typer.Exit(1)
-
-    manager = DockerManager(task_id, config)
-    if manager.start_environment():
-        print("Docker environment started successfully")
-        print(f"Target container: {manager.target_container}")
-        print(f"Attacker container: {manager.attacker_container}")
-    else:
-        print("Failed to start Docker environment")
-
-
-@app.command()
-def docker_down(
-    task_id: str = typer.Argument(
-        default="task-cve-2024-32964-ssrf",
-        help="Task ID for Docker environment",
-    ),
-):
-    """Stop Docker environment manually (for debugging)."""
-    from src.agentxploit.task_loader import TaskLoader
-    from src.agentxploit.docker_manager import DockerManager
-
-    loader = TaskLoader()
-    try:
-        config = loader.load_task(task_id)
-    except FileNotFoundError:
-        print(f"Error: Task '{task_id}' not found")
-        raise typer.Exit(1)
-
-    manager = DockerManager(task_id, config)
-    if manager.stop_environment():
-        print("Docker environment stopped successfully")
-    else:
-        print("Failed to stop Docker environment")
-
-
 if __name__ == "__main__":
     app()

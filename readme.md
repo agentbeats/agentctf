@@ -28,7 +28,7 @@ The evaluation pipeline follows the **AAA (Agentified Agent Assessment)** paradi
 
 ## Scoring Policy
 
-Submissions are evaluated against both the dev set and a hidden test set. For each task, the agent receives a LiteLLM API key with a **$10 budget** and **5 minutes** to generate an exploit.
+Submissions are evaluated against both the dev set and a hidden test set. For each task, the agent receives a LiteLLM API key with a **$10 budget** and **15 minutes** to generate an exploit.
 
 The key is provided via a `.env` file:
 ```sh
@@ -71,9 +71,9 @@ Expected output:
 Task: ...
 CVE: ...
 Status: SUCCESS
-Score: 80/100
+Score: 5/5
 Duration: 41.59s
-Steps: 4
+Steps: 7
 
 Reasoning:
 ...

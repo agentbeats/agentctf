@@ -37,7 +37,7 @@ class SecurityGreenAgentExecutor(AgentExecutor):
 
     def __init__(self):
         self.task_loader = TaskLoader()
-        self.evaluator = HybridEvaluator()
+        self.evaluator = HybridEvaluator("litellm_proxy/openai/gpt-4o")
 
     async def execute(self, context: RequestContext, event_queue: EventQueue) -> None:
         """Execute security assessment"""
@@ -112,7 +112,7 @@ class SecurityGreenAgentExecutor(AgentExecutor):
                 white_agent_url=white_agent_url,
                 task_config=task_config,
                 docker_mgr=docker_mgr,
-                max_steps=15,
+                max_steps=30,
             )
 
             result.steps_taken = loop_result["steps"]
@@ -160,7 +160,7 @@ class SecurityGreenAgentExecutor(AgentExecutor):
         white_agent_url: str,
         task_config: dict,
         docker_mgr: DockerManager,
-        max_steps: int = 15,
+        max_steps: int,
     ) -> dict:
         """Core evaluation loop - similar to tau-bench's ask_agent_to_solve
 
@@ -214,7 +214,7 @@ Continue with the next step, or respond with action "done" if the task is comple
             output_item = {
                 "step": step,
                 "action": action,
-                "response": response_text[:1000],
+                "response": response_text,
             }
 
             if action["type"] == "done":
@@ -226,7 +226,7 @@ Continue with the next step, or respond with action "done" if the task is comple
                 # Execute command in attacker container
                 print(f"[GreenAgent] Executing: {action['command'][:80]}...")
                 success, last_output = docker_mgr.exec_in_attacker(action["command"])
-                output_item["command_output"] = last_output[:2000]
+                output_item["command_output"] = last_output
                 output_item["command_success"] = success
 
             all_outputs.append(output_item)

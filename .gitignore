@@ -9,7 +9,11 @@ run*.log
 # Results and evaluation output
 results/
 *evaluation*.json
+submission.zip
 
 # IDE / tool
 .claude/
 .vscode/
+data/task_test
+data/task_all
+data/task_dev

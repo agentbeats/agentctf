@@ -72,7 +72,6 @@ class SecurityWhiteAgentExecutor(AgentExecutor):
         response = completion(
             messages=messages,
             model=self.model,
-            temperature=0.0,
         )
 
         assistant_message = response.choices[0].message.content or ""
